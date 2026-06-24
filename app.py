@@ -162,5 +162,16 @@ def logout():
     session.pop("user", None)
     return redirect("/login")
 
+@app.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
+    if "user" not in session:
+        return redirect("/login")
+
+    result = None
+
+    if request.method == "POST":
+        user_goal = request.form.get("role")
+        resume_text = request.form.get("resume")
+        print(f"DEBUG POST: user_goal={user_goal}, resume_len={len(resume_text) if resume_text else 0}")
 if __name__ == "__main__":
     app.run(debug=True)
