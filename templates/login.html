@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <div class="auth-deco" aria-hidden="true">
+    <svg class="auth-deco-geo" viewBox="0 0 240 600" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="120,30 200,140 40,140" fill="none" stroke="#D4A017" stroke-width="2" opacity="0.4"/>
+      <circle cx="50" cy="300" r="80" fill="none" stroke="#D4A017" stroke-width="1" opacity="0.25"/>
+      <rect x="140" y="380" width="70" height="70" fill="#D4A017" opacity="0.07" transform="rotate(25,175,415)"/>
+      <line x1="0" y1="220" x2="240" y2="220" stroke="#D4A017" stroke-width="1" opacity="0.2"/>
+      <text x="10" y="560" fill="#fff" opacity="0.04" font-size="110" font-weight="900" font-family="Georgia">↩</text>
+    </svg>
+    <div class="auth-deco-inner">
+      <div>
+        <div class="auth-deco-title">Welcome<br>Back,<br>Pioneer</div>
+        <div class="auth-deco-sub">— your data awaits</div>
+      </div>
+      <div class="auth-deco-tags">
+        Sessions ✦ History<br>
+        Reports ✦ Progress
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form-side">
+    <span class="section-eyebrow">✦ Returning User</span>
+    <h1 class="page-title">Welcome Back</h1>
+    <p class="auth-hint">— login to access your account</p>
+
+    {% if error %}
+    <div class="error-msg" role="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" novalidate>
+      <label class="mx-label" for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="your@email.com" required aria-label="Email address">
+
+      <label class="mx-label" for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="your password" required aria-label="Password">
+
+      <button type="submit" class="btn-primary" aria-label="Login to account">Login ✦</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="/forget_password">Forgot password →</a>
+    </div>
+
+    <p class="auth-switch">Don't have an account? <a href="/signup">Sign Up →</a></p>
+  </div>
+
+</div>
+{% endblock %}

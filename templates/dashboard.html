@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dash-welcome">
+  <div class="dash-welcome-diamond" aria-hidden="true"></div>
+  <div>
+    <div class="dash-welcome-label">Good to see you</div>
+    <h1 class="dash-welcome-name">Welcome, {{ user }}</h1>
+  </div>
+</div>
+
+<div class="mx-card">
+  <span class="section-eyebrow">✦ Primary Tool</span>
+  <h2 class="page-title" style="margin-bottom:20px;">Resume Analyser</h2>
+
+  <form method="POST" enctype="multipart/form-data" novalidate>
+    <label class="mx-label" for="resume">Paste Your Resume</label>
+    <textarea id="resume" name="resume" placeholder="Paste your resume text here…" rows="6"></textarea>
+
+    <div class="upload-zone"
+      onclick="document.getElementById('file-input').click()"
+      onkeypress="if(event.key==='Enter')document.getElementById('file-input').click()"
+      role="button" tabindex="0">
+      ⬆ Drop file or click to upload &nbsp;✦&nbsp; PDF, DOCX, TXT
+    </div>
+    <input type="file" id="file-input" name="file" style="display:none;">
+
+    <label class="mx-label" for="role" style="margin-top:6px;">Target Role</label>
+    <input type="text" id="role" name="role" placeholder="e.g. Senior Product Manager" required>
+
+    <button type="submit" class="btn-primary" onclick="showLoading()">Analyse ✦</button>
+
+    <div id="loading" role="status" aria-live="polite">
+      ⏳ Analysing your resume — please wait…
+    </div>
+  </form>
+</div>
+
+{% if result and result.get("skills") %}
+
+  {% if result.get("error") %}
+  <div class="error-msg" role="alert">Error: {{ result.error }}</div>
+  {% endif %}
+
+  {# Fit Score #}
+  <div class="result-block">
+    <h3>✦ Fit Score — {{ result.get("score", 0) }}/10</h3>
+    <p class="score-summary">{{ result.get("summary", "") }}</p>
+  </div>
+
+  {# ATS Score #}
+  {% set ats = result["ats_score"] %}
+  <div class="result-block">
+    <h3>✦ ATS Score — {{ ats["score"] }}/100
+      <span style="font-size:13px; font-weight:400; color:#888;">— {{ ats["verdict"] }}</span>
+    </h3>
+
+    <div class="ats-bar-wrap">
+      {% if ats["score"] >= 75 %}
+        <div class="ats-bar good" style="width:{{ ats['score'] }}%;"></div>
+      {% elif ats["score"] >= 50 %}
+        <div class="ats-bar average" style="width:{{ ats['score'] }}%;"></div>
+      {% else %}
+        <div class="ats-bar poor" style="width:{{ ats['score'] }}%;"></div>
+      {% endif %}
+    </div>
+
+    {% if ats["score"] >= 75 %}
+      <p class="ats-verdict good">✦ Good — likely to pass ATS filters</p>
+    {% elif ats["score"] >= 50 %}
+      <p class="ats-verdict average">⚠ Average — may get filtered out</p>
+    {% else %}
+      <p class="ats-verdict poor">✗ Poor — needs significant improvement</p>
+    {% endif %}
+
+    <span class="ats-section-label">Why your score is this:</span>
+    <ul class="ats-list">
+      {% for r in ats.get("reasons", []) %}
+      <li>{{ r }}</li>
+      {% endfor %}
+    </ul>
+
+    <span class="ats-section-label">How to improve:</span>
+    <ul class="ats-list">
+      {% for tip in ats.get("improvements", []) %}
+      <li>{{ tip }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {# Skills #}
+  <div class="result-block">
+    <h3>✦ Identified Skills</h3>
+    <ul>
+      {% for s in result.get("skills", []) %}
+      <li>{{ s }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {# Missing Skills #}
+  <div class="result-block missing">
+    <h3>✦ Missing Skills</h3>
+    <ul>
+      {% for s in result.get("missing_skills", []) %}
+      <li>{{ s }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {# Roadmap #}
+  <div class="result-block roadmap">
+    <h3>✦ Your Roadmap</h3>
+    <ul>
+      {% for s in result.get("roadmap", []) %}
+      <li>
+        {% if s is mapping %}
+          <strong>{{ s.get("skill", "") }}</strong> — {{ s.get("description", "") }}
+          {% set res = s.get("resources") or s.get("resource") %}
+          {% if res %}
+            <br><small>📚
+              {% if res is string %}{{ res }}
+              {% else %}{{ res | join(" · ") }}
+              {% endif %}
+            </small>
+          {% endif %}
+        {% else %}
+          {{ s }}
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {# Interview Questions #}
+  <div class="result-block interview">
+    <h3>✦ Interview Questions</h3>
+    <ul>
+      {% for s in result.get("interview_questions", []) %}
+      <li>{{ s }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+{% endif %}
+
+<script>
+function showLoading() {
+  document.getElementById("loading").style.display = "block";
+}
+</script>
+
+{% endblock %}

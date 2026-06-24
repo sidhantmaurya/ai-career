@@ -1,0 +1,75 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="history-header">
+  <div class="history-num" aria-hidden="true">{{ '%02d' % (reports | length) if reports else '00' }}</div>
+  <div>
+    <h1 class="page-title">Your History</h1>
+    <span class="section-eyebrow" style="margin-top:4px;">— all past analyses</span>
+  </div>
+</div>
+
+{% if reports %}
+  {% for r in reports %}
+  <article class="history-card" aria-label="Analysis entry {{ loop.index }}">
+
+    <div class="history-card-head">
+      <span>✦ Analysis — Entry #{{ '%03d' % loop.index }}</span>
+      <span>{{ r.created_at if r.created_at else '' }} · {{ r.role if r.role else 'General' }}</span>
+    </div>
+
+    <div class="history-card-body">
+      <div class="resume-preview" aria-label="Resume preview">
+        {{ r.resume[:200] }}{% if r.resume|length > 200 %}…{% endif %}
+      </div>
+
+      <div class="history-grid">
+        <div class="result-block">
+          <h3>✦ Skills Found</h3>
+          <ul aria-label="Skills found">
+            {% for s in r.result.get("skills", []) %}<li>{{ s }}</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="result-block missing">
+          <h3>✦ Gaps</h3>
+          <ul aria-label="Missing skills">
+            {% for s in r.result.get("missing_skills", []) %}<li>{{ s }}</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="result-block roadmap">
+          <h3>✦ Roadmap</h3>
+          <ul aria-label="Career roadmap">
+            {% for s in r.result.get("roadmap", []) %}<li>{{ s }}</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="result-block interview">
+          <h3>✦ Interview Questions</h3>
+          <ul aria-label="Interview questions">
+            {% for s in r.result.get("interview_questions", []) %}<li>{{ s }}</li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </article>
+  {% endfor %}
+
+{% else %}
+  <div class="mx-card" style="text-align:center; padding:48px 24px;">
+    <span class="section-eyebrow">✦ No Records Yet</span>
+    <p style="font-family:'Courier New',monospace; font-size:13px; color:#888; margin-top:12px; letter-spacing:1px;">
+      Head to the dashboard and run your first analysis.
+    </p>
+    <a href="/dashboard" class="btn-primary" style="margin-top:20px; display:inline-block; text-decoration:none;">
+      Go to Dashboard ✦
+    </a>
+  </div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a href="/dashboard" class="logo">
+          AI Career
+          <span>— intelligence engine</span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="/history">History</a>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    <p>✦ AI Career &copy; 2025 — intelligence engine ✦</p>
+  </footer>
+
+</body>
+</html>
